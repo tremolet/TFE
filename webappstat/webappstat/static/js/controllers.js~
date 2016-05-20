@@ -7,7 +7,6 @@ angular.module('Controllers', [])
 function IndexController($scope,$http) {
   $http.get("/logs").then(function(response) {
     $scope.logs = response.data;
-    console.log($scope.logs);
   });
 }
 

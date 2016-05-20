@@ -7,7 +7,7 @@
 </div>
 
 <h1>Graph</h1>
-<nb-login data='logs' ng-if="logs"></nb-login>
+<pie-graph data='logs' ng-if="logs"></pie-graph>
 <div class="header-push">
 </div>
 

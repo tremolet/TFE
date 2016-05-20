@@ -55,7 +55,9 @@
 }
 
 
-
+#chart{
+	border: 1px solid #CCC;
+}
 .bar{
 	fill: purple;
 	shape-rendering: crispEdges;
@@ -69,7 +71,6 @@
 .axis line{
 	fill: none;
 	stroke: #000;
-        border: 1px solid #CCC;
 	shape-rendering: crispEdges;
 }
 .gridline path,
