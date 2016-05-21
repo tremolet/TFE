@@ -1,0 +1,15 @@
+<form name='searchUser' ng-controller='formValidation'>
+	 <li ng-repeat='user in usersFilter.usersFilter'>
+         <label>{{user.userID}}
+	 <input type='checkbox' id='userid' value={{user.userID}} ng-model=user.Selected>
+         </label>
+       </li>	 
+	 <input type='date' name='_from' min='dateMin' max='now' ng-model='searchUserForm.model.from'>
+         <input type='date' name='_to' min='dateMin' max='now' ng-model='searchUserForm.model.to'>
+         <input type="checkbox" ng-model="selectedAll" ng-click="checkAll()" />
+         <input type="submit" ng-disabled='form.valideDate.$error.endBeforeStart' ng-click='searchUser(searchUserForm)' value="Search Users" />
+</form>
+
+<h1>Graph of activities</h1>
+
+
