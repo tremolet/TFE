@@ -1,0 +1,41 @@
+'use strict';
+
+angular.module('Controllers', [])
+//  .controller("myController", mycontroller);
+
+/* Controllers */
+function IndexController($scope,$http) {
+  $http.get("/logs").then(function(response) {
+    $scope.logs = response.data.logs;
+  });
+}
+
+function AboutController($scope) {
+
+}
+
+function PostListController($scope,$http) {
+  $http.get("/logs").then(function(response) {
+    $scope.logs = response.data.logs;
+  });
+}
+
+function PostDetailController($scope, $routeParams, Post) {
+  var postQuery = Post.get({ postId: $routeParams.postId }, function(post) {
+    $scope.post = post;
+  });
+}
+
+function userController($rootScope,$scope,$http) {
+  $http.get("/users").then(function(response) {
+    $scope.userToSearch = response.data.users;
+  });
+     $scope.refreshGraph=function(user){
+      $scope.getUser = angular.copy(user);
+      $http.get('/logs?userID='+$scope.getUser).then(function(response) {
+	$scope.logs=response.data.logs;
+        $rootScope.$broadcast('refreshChart',$scope.logs);
+  	});
+      
+  };  
+}

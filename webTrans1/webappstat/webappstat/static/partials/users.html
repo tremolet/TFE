@@ -1,0 +1,12 @@
+
+<form>
+	 <select ng-options="user for user in userToSearch track by user" ng-model='user'></select>
+         <input type="submit" ng-click='refreshGraph(user)' value="Search User" />
+</form>
+<pie-graph logs="logs" ng-if="logs"></pie-graph>
+
+<!--<h1>Graph of nb login per day</h1>-->
+<!--<nbLogin data='usersToShow' ng-if='usersToShow'></nbLogin>-->
+
+
+
