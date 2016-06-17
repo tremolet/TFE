@@ -1,0 +1,60 @@
+MANUEL D'UTILISATION
+
+STRUCTURE DU PROJET
+- cluemetric
+    - setup.py : C'est dans ce fichier que sont définis les versions des outils à utiliser pour un bon fonctionnement de l'application en environnement virtuel
+	- clumetric
+		- model
+		  - _init_.py
+		  - log.py : fichier qu'utilisera MongoEngine pour chercher dans la collection logs,en prenant les attributs de cette classe pour les attributs de la collection. Les noms donnés sont importants,car MongoEngine fera le lien entre les attributs de la classe et les attributus de la collection automatiquement
+		- parser
+		  - _init_.py
+		  - parser.py : il s'agit du parser qui lit le log Apache,et se charge de mettre chaque ligne dans la base de données
+		  - access_log.txt : log Apache,rafraichit toutes les 24h 
+		- static
+		  - css : contient les fichiers CSS utilisés pour le projet,aussi bien les ficbiers CSS Bootstrap que le fichier de l'application en elle-même
+		  - img : contient les images,telles que icones,etc... utilisées dans l'application
+		  - js
+			 - app.js : fichier determinant le controlller et le fichier HTML correspondant à ce controller. Dénomination des URL comme sous Flask
+			 - controller.js : contient les contrôleurs de l'application, ainsi que certaines fonctions permettant le bon fonctionnement de ceux-ci,telle que la fonction qui permet de vérifier la validité d'une date
+			 - directives.js : contient les directives du projet. Ici il s'agit des codes permettant de créer ou de mettre à jour les graphiques à afficher
+			 - filters.js
+			 - services.js
+		  - lib : contient les librairies installés permettant le bon fonctionnement de l'application. Pour l'instant ce dossier contient les fichiers d'installation de D3JS,AngularJS,Bootstrap
+		  - partials : contient les pages que va utiliser la vue
+			  - activities.html : page qui affiche le graphique en camembert de l'activité, d'un utilisateur ou non,avec possibilité de filtres
+			  - landing.html
+			  - logins.html : page qui affiche le graphique en bâtonnet du nombre de login,d'un utilisateur ou non,avec possibilité de filtres
+		  - templates
+			 - index.html : Page principale de l'application,c'est sur cette page que l'on inclue les différents fichiers au bon fonctionnement de l'application. C'est également sur cette page que se trouve la vue.
+		- init.py
+		- app.py : Partie back-end de l'application. Elle contient le code Flask permettant de récuperer et d'envoyer les données à la partie front-end,avec gestion des filtres
+		- config.py : Contient les paramètres statiques de l'application,tels que l'adresse IP de MongoDB,ou encore l'emplacement du fichier log Apache
+		
+PRERECQUIS
+Afin d'utiliser l'application,il faut que les différentes librairies soient installées. Pour celà,lancer setup.py,à la racine de l'application.
+CRON doit également être configuré
+l'interface réseau en mode bridge 
+etc/resolv.conf pour rajouter des noms de domaines
+ifconfig
+installer mongodb
+creer la base de données
+collection créer automatiquement
+
+cd ~
+virtualenv --no-site-packages -p /usr/bin/python2.7 ~/venv
+source ~/venv/bin/activate
+sudo apt-get install python-dev
+pip install websocket
+
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+
+L'UTILISER POUR LA PREMIERE FOIS	
+
+Lancer app.py afin de lancer l'application
+Ensuite,aller dans le browser de votre choix,à l'adresse SERVER_HOST:SERVER_PORT défini dans le fichier config.py
+

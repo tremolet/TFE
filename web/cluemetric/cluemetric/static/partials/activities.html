@@ -1,0 +1,20 @@
+<div class="header-section">
+	<div class="row header-row">
+		<div class="span12 masthead">
+			<h1 class="heading">User profile</h1>
+		</div>
+             
+	</div>
+
+</div>
+<div class="header-push">
+</div>
+
+<form>
+	 <select ng-options="user for user in userToSearch track by user" ng-model='user'></select>
+		<input type="text" placeholder='Start date (YYYY-mm-dd)' ng-model="startDate"/>
+		<input type="text" placeholder='End date (YYYY-mm-dd)' ng-model="endDate"/>
+		<input type="submit" ng-click='refreshGraph(user)' value="Search User" />
+</form>
+<!-- Show the pie graph only if $scope.logs isn't empty from the right controller, and passing the data --> 
+<activities logs="logs" ng-if="logs"></activities>
