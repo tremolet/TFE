@@ -22,6 +22,10 @@ angular.module('WebAppStat',
       templateUrl: 'static/partials/logins.html',
       controller: LoginsController
     })
+	.when('/showRequests', {
+      templateUrl: 'static/partials/requests.html',
+      controller: RequestController
+    })
     .otherwise({
       redirectTo: '/'
     });

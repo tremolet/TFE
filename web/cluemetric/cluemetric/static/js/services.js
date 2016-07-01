@@ -20,5 +20,23 @@ angular.module('Services', ['ngResource'])
       }
     });
   })
+  .factory('Requests', function($resource) {
+    return $resource('/requests/', {}, {
+      query: {
+        method: 'GET',
+        params: {},
+        isArray: true
+      }
+    });
+  })
+  .factory('Users', function($resource) {
+    return $resource('/users/', {}, {
+      query: {
+        method: 'GET',
+        params: {},
+        isArray: true
+      }
+    });
+  })
 ;
 

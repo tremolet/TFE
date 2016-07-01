@@ -1,7 +1,7 @@
 <div class="header-section">
 	<div class="row header-row">
 		<div class="span12 masthead">
-			<h1 class="heading">Number of login per day</h1>
+			<h1 class="heading">Number of rqts per day</h1>
 		</div>
              
 	</div>
@@ -18,4 +18,4 @@
 		<label for='errors'>{{ message }} </label>
 </form>
 <!-- Show the bar chart only if $scope.logs isn't empty from the right controller,and passing the data --> 
-<nb-login data="logs" ng-if="logs"></nb-login>
+<nb-request data="logs" ng-if="logs"></nb-request> 

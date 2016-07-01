@@ -54,6 +54,11 @@ def goToLog():
     return redirect("/#/showActivities", code=302)
 
 #redirect to the right url
+@app.route('/showRequests', methods=['GET'])
+def goToRequests():
+    return redirect("/#/showRequests", code=302)	
+
+#redirect to the right url
 @app.route('/showLogs', methods=['GET'])
 def goToActivities():
     return redirect("/#/showLogs", code=302)
@@ -63,6 +68,7 @@ def to_date(date):
 #:type:date:Datetime
 	
 	return datetime.strptime(date, '%Y-%m-%d')
+
 
 #get the number of logins by day,with the possible filters (user_id,minimum date,maximum date)
 @app.route('/logs', methods=['GET'])
@@ -121,38 +127,33 @@ def get_activities():
     return jsonify(**response)	
 
 #get the number of requests per day,per category,with the possible filters (user_id,minimum date,maximum date)
-'''
+
 @app.route('/requests', methods=['GET'])
 def get_request():
-    logs = []
-    filters = {}
-    user_id = request.args.get('userID')
-    from_ = request.args.get('from')
-    until = request.args.get('until')
-    if user_id:
-        filters['user_id'] = user_id
-    if from_:
-        filters['timestamp__gte'] = to_date(from_)		
-    if until:
-        filters['timestamp__lte'] = to_date(until) + timedelta(days=1)	# otherwise 00:00:00 is taking into account
-
-    query = Log.objects(**filters)
-
-    agg_pipeline = {'$group': {'_id':{"cat":"$request.categ","date": { "$dateToString": { "format": "%Y-%m-%d", "date": "$timestamp" } }},
-								'count': {'$sum': 1}
-                              }
-                   }
-	results = list(query.aggregate(agg_pipeline))
-	counts = []
-	categ=''
-	date=''
-	for res in results:
-			categ = res['_id'].cat
-			date = res['_id'].date
-			counts.append({'count':res['count'],'categ':categ,'day':date})
-	response = {'success': True, 'logs': counts}
-	return jsonify(**response)	
-'''    	
+		logs = []
+		filters = {}
+		user_id = request.args.get('userID')
+		from_ = request.args.get('from')
+		until = request.args.get('until')
+		if user_id:
+			filters['user_id'] = user_id
+		if from_:
+			filters['timestamp__gte'] = to_date(from_)		
+		if until:
+			filters['timestamp__lte'] = to_date(until) + timedelta(days=1)	# otherwise 00:00:00 is taking into account
+		query = Log.objects(**filters)
+		agg_pipeline = {'$group': {'_id':{"cat":"$request.categ","date": {"$dateToString": {"format": "%Y-%m-%d", "date": "$timestamp"}}},
+									'count': {'$sum': 1}
+								  }
+						}		  
+					  
+		results = list(query.aggregate(agg_pipeline))
+		counts = []
+		for res in results:
+				counts.append({'nbRequest':res['count'],'categ':res['_id']['cat'],'day':res['_id']['date']})
+		response = {'success': True, 'logs': counts}
+		return jsonify(**response)	
+   	
 
 #Run the application
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ function IndexController($scope,$http) {
 function isValidDate(dateString) {
   //if a date is %Y-%m-%d and is a possible date (ex : 1998-08-30 OK,1704-Feb-02 NOK,2016-02-30 NOK)
   /*
-  :params:dateString:type: Date object
+  :params:dateString:type: String
   */
   var regEx = /^\d{4}-\d{2}-\d{2}$/;
   if(!dateString.match(regEx))
@@ -32,10 +32,17 @@ function startEndDate(startDate,endDate){
 	
 	return (new Date(startDate)<= new Date(endDate));
 }
-
+function dateOK(dateString){
+//if a date is %Y-%m-%d and is a possible date (ex : 1998-08-30 OK,1704-Feb-02 NOK,2016-02-30 NOK),or is empty
+  /*
+  :params:dateString:type: String
+  */
+  dateString = dateString.trim();  
+  return (isValidDate(dateString) || dateString == '');
+}
 function makeUrl(urlFirstPart,user,dateStart,dateEnd){
 	/*make the url
-	if userID set,add to the url. If dateStart and dateEnd are valid dates but not in correct range,none of these are taken in account. Else if at least one of these are valid,but not the other,this one is taken in account
+	if userID set,add to the url. If dateStart and/or dateEnd is set,will be added to URL
 	*/
 	/*
 	:params:urlFirstPart:basename of the url where the info will be retrieved
@@ -52,26 +59,14 @@ function makeUrl(urlFirstPart,user,dateStart,dateEnd){
 	if (user !=null){
 		dataToSend.push('userID='+user);
 	}
-	if (dateStart !='' && dateEnd !='' && isValidDate(dateStart) && isValidDate(dateEnd)){
-			if (startEndDate(dateStart,dateEnd)){
-				dataToSend.push('from='+dateStart);
-				dataToSend.push('until='+dateEnd);
-			}
-	} else {
-		if (dateStart !='' || dateEnd !=''){
-			if (dateStart !=''){
-			 if (isValidDate(dateStart)){
-				dataToSend.push('from='+dateStart); 
-			 }	
-			}
-			if (dateEnd !=''){
-			 if (isValidDate(dateEnd)){
-				dataToSend.push('until='+dateEnd); 
-			 }	
-			}
+	if (dateStart !='' || dateEnd !=''){
+		if (dateStart !=''){
+			dataToSend.push('from='+dateStart); 
+		}	
+		if (dateEnd !=''){
+			dataToSend.push('until='+dateEnd); 
 		}
 	}
-	
 	if (user !=null || dateStart !='' || dateEnd !=''){
 	 url+='?'+dataToSend.join('&');	
 	}
@@ -84,8 +79,25 @@ function ActivitiesController($rootScope,$scope,$http) {
 	$scope.userToSearch = response.data.users;  	
     $scope.startDate=new Date(response.data.minDate).toISOString().slice(0,10);
     $scope.endDate=new Date(response.data.maxDate).toISOString().slice(0,10);
+	$scope.message = '';
   });	
   $scope.refreshGraph=function(user){
+	var errors=[];
+	$scope.message = '';
+    var OK = true;
+    if (!dateOK($scope.startDate) || !dateOK($scope.endDate)){
+		errors.push("One or many dates are invalid");
+	}
+	if (isValidDate($scope.startDate) && isValidDate($scope.endDate)){
+		if (!startEndDate($scope.startDate,$scope.endDate)){
+			errors.push("The starting date must be before the end date");
+		}
+	}
+	$scope.message = errors.join(' and ');
+	if ($scope.message != ''){
+		OK=false;
+	}
+	if (OK == true){
 	  //when the button in the form is clicked
     $scope.getUser = angular.copy(user);
 	var url=makeUrl('/activities',$scope.getUser,$scope.startDate,$scope.endDate);
@@ -94,6 +106,7 @@ function ActivitiesController($rootScope,$scope,$http) {
 	  //linked with scope.$on('refreshChart') of the pie chart,will update the logs
       $rootScope.$broadcast('refreshChart',$scope.logs);
     });  
+	}
   };  
 }
 
@@ -104,8 +117,25 @@ $http.get("/users").then(function(response) {
     $scope.userToSearch = response.data.users;
     $scope.startDate=new Date(response.data.minDate).toISOString().slice(0,10);
     $scope.endDate=new Date(response.data.maxDate).toISOString().slice(0,10);
+	$scope.message = ''; 
   });	
   $scope.refreshGraph=function(user){
+	var errors=[];
+	$scope.message= '';
+    var OK = true;
+    if (!dateOK($scope.startDate) || !dateOK($scope.endDate)){
+		errors.push("One or many dates are invalid");
+	}
+	if (isValidDate($scope.startDate) && isValidDate($scope.endDate)){
+		if (!startEndDate($scope.startDate,$scope.endDate)){
+			errors.push("The starting date must be before the end date");
+		}
+	}
+	$scope.message = errors.join(' and ');
+	if ($scope.message != ''){
+		OK=false;
+	}
+	if (OK == true){	  
 	  //when the button in the form is clicked
     $scope.getUser = angular.copy(user);
 	var dataToSend=[];
@@ -114,8 +144,47 @@ $http.get("/users").then(function(response) {
       $scope.logs=response.data.logs;
 	  //linked with scope.$on('refreshChart') of the bar chart,will update the logs
       $rootScope.$broadcast('refreshChart',$scope.logs);
-    });  
+    });  }
   };  
 }
+function RequestController($scope,$http,$rootScope) {
+  
+$http.get("/users").then(function(response) {
+	//get the data from Flask
+    $scope.userToSearch = response.data.users;
+    $scope.startDate=new Date(response.data.minDate).toISOString().slice(0,10);
+    $scope.endDate=new Date(response.data.maxDate).toISOString().slice(0,10);
+	$scope.message = ''; 
+  });	
+  $scope.refreshGraph=function(user){
+	var errors=[];
+	$scope.message= '';
+    var OK = true;
+    if (!dateOK($scope.startDate) || !dateOK($scope.endDate)){
+		errors.push("One or many dates are invalid");
+	}
+	if (isValidDate($scope.startDate) && isValidDate($scope.endDate)){
+		if (!startEndDate($scope.startDate,$scope.endDate)){
+			errors.push("The starting date must be before the end date");
+		}
+	}
+	$scope.message = errors.join(' and ');
+	if ($scope.message != ''){
+		OK=false;
+	}
+	if (OK == true){	  
+	  //when the button in the form is clicked
+    $scope.getUser = angular.copy(user);
+	var dataToSend=[];
+	var url=makeUrl('/requests',$scope.getUser,$scope.startDate,$scope.endDate);
+    $http.get(url).then(function(response) {
+      $scope.logs=response.data.logs;
+	  //linked with scope.$on('refreshChart') of the bar chart,will update the logs
+      $rootScope.$broadcast('refreshChart',$scope.logs);
+    });  }
+  };  
+}
+
+
 
 

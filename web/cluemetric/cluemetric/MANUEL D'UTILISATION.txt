@@ -18,8 +18,8 @@ STRUCTURE DU PROJET
 			 - app.js : fichier determinant le controlller et le fichier HTML correspondant à ce controller. Dénomination des URL comme sous Flask
 			 - controller.js : contient les contrôleurs de l'application, ainsi que certaines fonctions permettant le bon fonctionnement de ceux-ci,telle que la fonction qui permet de vérifier la validité d'une date
 			 - directives.js : contient les directives du projet. Ici il s'agit des codes permettant de créer ou de mettre à jour les graphiques à afficher
-			 - filters.js
-			 - services.js
+			 - filters.js : filtres à ajouter pour par exemples afficher que les prenoms en majuscule,commençant par le mot 'Zed'
+			 - services.js : Utilisé avec factory,utilise les dépendances d'injection (par exemple,appuie 3 fois sur le bouton pour voir apparaitre un message)
 		  - lib : contient les librairies installés permettant le bon fonctionnement de l'application. Pour l'instant ce dossier contient les fichiers d'installation de D3JS,AngularJS,Bootstrap
 		  - partials : contient les pages que va utiliser la vue
 			  - activities.html : page qui affiche le graphique en camembert de l'activité, d'un utilisateur ou non,avec possibilité de filtres
@@ -32,29 +32,44 @@ STRUCTURE DU PROJET
 		- config.py : Contient les paramètres statiques de l'application,tels que l'adresse IP de MongoDB,ou encore l'emplacement du fichier log Apache
 		
 PRERECQUIS
-Afin d'utiliser l'application,il faut que les différentes librairies soient installées. Pour celà,lancer setup.py,à la racine de l'application.
-CRON doit également être configuré
-l'interface réseau en mode bridge 
-etc/resolv.conf pour rajouter des noms de domaines
-ifconfig
-installer mongodb
-creer la base de données
-collection créer automatiquement
+Si vous désirez avoir accès à certaines adresses IP pour l'installation, allez dans etc/resolv.conf pour rajouter des noms de domaines
+Pour installer MongoDB,voici les différentes commandes :
+	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+	echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+	sudo apt-get update
+	sudo apt-get install -y mongodb-org
 
-cd ~
-virtualenv --no-site-packages -p /usr/bin/python2.7 ~/venv
-source ~/venv/bin/activate
-sudo apt-get install python-dev
-pip install websocket
+Pour installer l'environnement virtuel,utilisez les commandes suivantes :
+	cd ~
+	virtualenv --no-site-packages -p /usr/bin/python2.7 ~/venv
+	source ~/venv/bin/activate
+
+Afin d'utiliser l'application,il faut aussi que différentes technologies soient installées. Pour cela,lancer setup.py,à la racine de l'application. Assurez vous d'avoir internet lors de l'installation,pour cela,soyez en NAT ou en Bridge,et d'être dans l'environnement virtuel. 	
+
+Cela vous permettra d'utiliser certaines technologies uniquement au sein de cet environnement,pour ne pas mélanger les différentes versions d'une même technologies,dans le cas où vous travaillez sur différents projets à la fois
+
+Une fois installé,vous pouvez créer une base de données,une fois connecté à MongoDB via la commande mongo,une base de données en utilisant la commande :
+	use nomDeLaBaseDeDonnees
+La collection sera automatiquement crée une fois que vous commencerez à y insérer des élements.
+
+CRON doit également être configuré,via sudo crontab - e ,et configurez la fréquence de lancement du parser,afin que cette dernière coïncide  avec l'heure à laquelle le log Apache est rafraîchit. Indiquez également le chemin du parser
+sudo crontab -e
+par exemple : mm hh  * *  * nameUser CheminDeLaChoseAExecuter
+voir https://doc.ubuntu-fr.org/cron
 
 
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
-sudo apt-get update
-sudo apt-get install -y mongodb-org
+Assurez vous également d'avoir Python :
+	sudo apt-get install python-dev
+	pip install websocket
+
+Vous pouvez vérifier que vous avez bien une adresse IP via ifconfig,et que vous ayez accès à Internet,en pingant Google,par exemple
 
 L'UTILISER POUR LA PREMIERE FOIS	
 
-Lancer app.py afin de lancer l'application
-Ensuite,aller dans le browser de votre choix,à l'adresse SERVER_HOST:SERVER_PORT défini dans le fichier config.py
+Assurez vous que le fichier de config contiennent les bonnes données. Pour les chemins,privilégiez un chemin absolu plutôt que relatif.
+Lancez l'environnement virtuel,via la commande :
+	source ~/venv/bin/activate
+Lancer app.py afin de lancer l'application via :
+	python cheminversApp/app.py
+Ensuite,aller dans le browser de votre choix,à l'adresse SERVER_HOST:SERVER_PORT, définis dans le fichier config.py
 
